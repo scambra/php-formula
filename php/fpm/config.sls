@@ -21,6 +21,20 @@
     {%- set conf = php.lookup.fpm.conf|replace(first_version, version) %}
     {%- set pools = php.lookup.fpm.pools|replace(first_version, version) %}
 
+    {%- if version in php.fpm.config.ini %}
+      {%- set ini_settings_versioned = {} %}
+      {%- for key, value in ini_settings.items() %}
+        {%- do ini_settings_versioned.update({key: value.copy()}) %}
+      {%- endfor %}
+      {%- for key, value in php.fpm.config.ini[version].items() %}
+        {%- if ini_settings_versioned[key] is defined %}
+          {%- do ini_settings_versioned[key].update(value) %}
+        {%- else %}
+          {%- do ini_settings_versioned.update({key: value}) %}
+        {%- endif %}
+      {%- endfor %}
+    {%- endif %}
+
     {%- for key, value in conf_settings.items() %}
       {%- if value is string %}
         {%- do conf_settings.update({key: value.replace(first_version, version)}) %}

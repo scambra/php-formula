@@ -47,7 +47,7 @@ php_fpm_ini_config_{{ version }}:
   {{ php_ini(ini,
              'php_fpm_ini_config_' ~ version,
              php.fpm.config.ini.opts,
-             ini_settings
+             ini_settings_versioned | default(ini_settings)
   ) }}
 
 php_fpm_conf_config_{{ version }}:
